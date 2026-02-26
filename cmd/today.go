@@ -81,8 +81,12 @@ func runSummary(results []git.RepoResult, since time.Time) error {
 	model := viper.GetString("ai.model")
 	ollamaURL := viper.GetString("ai.ollama_url")
 
-	// 환경변수 우선
+	// 환경변수 우선 (GITDAY_API_KEY > ANTHROPIC_API_KEY > OPENAI_API_KEY)
 	if envKey := os.Getenv("GITDAY_API_KEY"); envKey != "" {
+		apiKey = envKey
+	} else if envKey := os.Getenv("ANTHROPIC_API_KEY"); envKey != "" && providerName == "claude" {
+		apiKey = envKey
+	} else if envKey := os.Getenv("OPENAI_API_KEY"); envKey != "" && providerName == "openai" {
 		apiKey = envKey
 	}
 
