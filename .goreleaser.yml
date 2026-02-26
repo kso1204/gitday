@@ -31,6 +31,7 @@ brews:
   - repository:
       owner: kso1204
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     homepage: "https://github.com/kso1204/gitday"
     description: "멀티레포 Git 데일리 활동 요약 + AI 요약 CLI"
     license: "MIT"
