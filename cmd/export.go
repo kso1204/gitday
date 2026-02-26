@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/wook/gitday/internal/git"
-	"github.com/wook/gitday/internal/output"
+	"github.com/kso1204/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/output"
 )
 
 var exportCmd = &cobra.Command{

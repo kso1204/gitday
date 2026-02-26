@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wook/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/git"
 )
 
 // ToMarkdown은 리포트를 마크다운 문자열로 변환한다.

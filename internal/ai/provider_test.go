@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/wook/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/git"
 )
 
 func TestNewProvider_Claude(t *testing.T) {

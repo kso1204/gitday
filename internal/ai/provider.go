@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/wook/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/git"
 )
 
 // Provider는 AI 요약 프로바이더 인터페이스이다.

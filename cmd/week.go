@@ -27,5 +27,5 @@ func runWeek(cmd *cobra.Command, args []string) error {
 	monday := now.AddDate(0, 0, -(weekday - 1))
 	since := time.Date(monday.Year(), monday.Month(), monday.Day(), 0, 0, 0, 0, now.Location())
 
-	return runReport(since, now)
+	return runReport(since, now, "week")
 }

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/wook/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/git"
 )
 
 var (

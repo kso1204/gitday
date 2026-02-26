@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/wook/gitday/internal/ai"
-	"github.com/wook/gitday/internal/git"
-	"github.com/wook/gitday/internal/output"
+	"github.com/kso1204/gitday/internal/ai"
+	"github.com/kso1204/gitday/internal/git"
+	"github.com/kso1204/gitday/internal/output"
 )
 
 var todayCmd = &cobra.Command{
@@ -26,12 +27,10 @@ func init() {
 func runToday(cmd *cobra.Command, args []string) error {
 	now := time.Now()
 	since := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	until := now
-
-	return runReport(since, until)
+	return runReport(since, now, "today")
 }
 
-func runReport(since, until time.Time) error {
+func runReport(since, until time.Time, period string) error {
 	scanPaths := viper.GetStringSlice("scan_paths")
 	excludes := viper.GetStringSlice("exclude")
 	author := viper.GetString("author")
@@ -64,24 +63,26 @@ func runReport(since, until time.Time) error {
 	compact := viper.GetBool("output.compact")
 	output.PrintReport(results, since, until, compact)
 
-	// 4. AI 요약 (--summary 플래그)
+	// 4. AI 요약 + 로그 저장 (--summary 플래그)
 	summary := viper.GetBool("summary")
 	if summary {
-		if err := runSummary(results, since); err != nil {
-			fmt.Fprintf(os.Stderr, "\n⚠ AI 요약 실패: %v\n", err)
+		summaryText := getSummary(results, since)
+		if summaryText != "" {
+			output.PrintSummary(summaryText)
 		}
+		// 로그 자동 저장
+		saveLog(results, since, until, period, summaryText)
 	}
 
 	return nil
 }
 
-func runSummary(results []git.RepoResult, since time.Time) error {
+func getSummary(results []git.RepoResult, since time.Time) string {
 	providerName := viper.GetString("ai.provider")
 	apiKey := viper.GetString("ai.api_key")
 	model := viper.GetString("ai.model")
 	ollamaURL := viper.GetString("ai.ollama_url")
 
-	// 환경변수 우선 (GITDAY_API_KEY > ANTHROPIC_API_KEY > OPENAI_API_KEY)
 	if envKey := os.Getenv("GITDAY_API_KEY"); envKey != "" {
 		apiKey = envKey
 	} else if envKey := os.Getenv("ANTHROPIC_API_KEY"); envKey != "" && providerName == "claude" {
@@ -92,7 +93,8 @@ func runSummary(results []git.RepoResult, since time.Time) error {
 
 	provider, err := ai.NewProvider(providerName, apiKey, model, ollamaURL)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "\n⚠ AI 요약 실패: %v\n", err)
+		return ""
 	}
 
 	prompt := ai.BuildPrompt(results, since.Format("2006-01-02"))
@@ -104,9 +106,35 @@ func runSummary(results []git.RepoResult, since time.Time) error {
 
 	text, err := provider.Summarize(ctx, prompt)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "⚠ AI 요약 실패: %v\n", err)
+		return ""
 	}
 
-	output.PrintSummary(text)
-	return nil
+	return text
+}
+
+func saveLog(results []git.RepoResult, since, until time.Time, period, summaryText string) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return
+	}
+
+	logDir := filepath.Join(home, ".gitday", "logs")
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return
+	}
+
+	filename := since.Format("2006-01-02") + ".md"
+	if period == "week" {
+		filename = since.Format("2006-01-02") + "_week.md"
+	}
+	logPath := filepath.Join(logDir, filename)
+
+	md := output.ToMarkdown(results, since, until, summaryText)
+	if err := os.WriteFile(logPath, []byte(md), 0600); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠ 로그 저장 실패: %v\n", err)
+		return
+	}
+
+	fmt.Printf("\n✓ 저장됨: %s\n", logPath)
 }

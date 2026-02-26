@@ -9,7 +9,7 @@ builds:
   - main: .
     binary: gitday
     ldflags:
-      - -s -w -X github.com/wook/gitday/cmd.version={{.Version}}
+      - -s -w -X github.com/kso1204/gitday/cmd.version={{.Version}}
     env:
       - CGO_ENABLED=0
     goos:
@@ -29,9 +29,9 @@ archives:
 
 brews:
   - repository:
-      owner: wook
+      owner: kso1204
       name: homebrew-tap
-    homepage: "https://github.com/wook/gitday"
+    homepage: "https://github.com/kso1204/gitday"
     description: "멀티레포 Git 데일리 활동 요약 + AI 요약 CLI"
     license: "MIT"
 

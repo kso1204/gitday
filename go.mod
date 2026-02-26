@@ -1,4 +1,4 @@
-module github.com/wook/gitday
+module github.com/kso1204/gitday
 
 go 1.25.6
 

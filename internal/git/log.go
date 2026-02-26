@@ -104,7 +104,7 @@ func parseGitLog(raw string) ([]Commit, error) {
 
 			date, _ := time.Parse(time.RFC3339, parts[3])
 			c := Commit{
-				Hash:    parts[0][:7],
+				Hash:    truncate(parts[0], 7),
 				Message: parts[1],
 				Author:  parts[2],
 				Date:    date,
@@ -122,6 +122,13 @@ func parseGitLog(raw string) ([]Commit, error) {
 	}
 
 	return commits, nil
+}
+
+func truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return s[:n]
 }
 
 func parseFileCount(stat string) int {

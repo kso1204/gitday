@@ -19,7 +19,7 @@ func init() {
 }
 
 const defaultConfig = `# gitday 설정 파일
-# https://github.com/wook/gitday
+# https://github.com/kso1204/gitday
 
 # 스캔 대상 디렉토리
 scan_paths:
@@ -71,7 +71,7 @@ func runInit(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if err := os.WriteFile(configPath, []byte(defaultConfig), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(defaultConfig), 0600); err != nil {
 		return fmt.Errorf("설정 파일 생성 실패: %w", err)
 	}
 

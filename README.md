@@ -28,18 +28,18 @@ petition은 테스트와 문서화 위주로 진행했습니다.
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install wook/tap/gitday
+brew install kso1204/tap/gitday
 ```
 
 ### Go Install
 
 ```bash
-go install github.com/wook/gitday@latest
+go install github.com/kso1204/gitday@latest
 ```
 
 ### 바이너리 다운로드
 
-[GitHub Releases](https://github.com/wook/gitday/releases)에서 플랫폼에 맞는 바이너리를 다운로드하세요.
+[GitHub Releases](https://github.com/kso1204/gitday/releases)에서 플랫폼에 맞는 바이너리를 다운로드하세요.
 
 ## 시작하기
 
